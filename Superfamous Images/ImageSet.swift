@@ -19,9 +19,9 @@ import Cocoa
 class ImageSet : NSObject {
     
     weak var changeObserver: ImageSetChangeObserver! = nil
-    var images: [NSImage!] = [] {
+    var images: [NSImage] = [] {
         didSet {
-            self.changeObserver.imageSetDidChange(self)
+            self.changeObserver.imageSetDidChange(set: self)
         }
     }
     let imageLoader = ImageLoader()
@@ -32,12 +32,14 @@ class ImageSet : NSObject {
     
     func startLoadingImages() {
         for urlString in self.imageURLs {
-            let url = NSURL(string: urlString)
-            self.imageLoader.retrieveImageAtURL(url) {
-                image in dispatch_async(dispatch_get_main_queue()) {
-                    var i = self.images
-                    i.append(image)
-                    self.images = i
+            let url = URL(string: urlString)!
+            self.imageLoader.retrieveImageAtURL(url: url) { image in
+                DispatchQueue.main.async {
+                    if let image = image {
+                        var i = self.images
+                        i.append(image)
+                        self.images = i
+                    }
                 }
             }
         }

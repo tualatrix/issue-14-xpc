@@ -8,12 +8,11 @@
 
 import Cocoa
 
-
-
+@NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    @IBAction func showWebsite(AnyObject) {
-        NSWorkspace.sharedWorkspace().openURL(NSURL(string: "http://superfamous.com"))
+    @IBAction func showWebsite(_ sender: Any) {
+        NSWorkspace.shared.open(URL(string: "http://superfamous.com")!)
     }
     
 }

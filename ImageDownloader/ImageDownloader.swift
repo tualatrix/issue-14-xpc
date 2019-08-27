@@ -8,28 +8,27 @@
 
 import Foundation
 
-
-
 class ImageDownloader : NSObject, ImageDownloaderProtocol {
-    let session: NSURLSession
+    let session: URLSession
     
-    init()  {
-        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        session = NSURLSession(configuration: config)
+    override init()  {
+        let config = URLSessionConfiguration.default
+        session = URLSession(configuration: config)
     }
-    
-    func downloadImageAtURL(url: NSURL!, withReply: ((NSData!)->Void)!) {
-        let task = session.dataTaskWithURL(url) {
+
+    func downloadImageAtURL(url: URL, withReply: ((Data?)->Void)?) {
+        let task = session.dataTask(with: url) {
             data, response, error in
-            if let httpResponse = response as? NSHTTPURLResponse {
+            if let httpResponse = response as? HTTPURLResponse {
                 switch (data, httpResponse) {
                 case let (d, r) where (200 <= r.statusCode) && (r.statusCode <= 399):
-                    withReply(d)
+                    withReply?(d)
                 default:
-                    withReply(nil)
+                    withReply?(nil)
                 }
             }
         }
         task.resume()
     }
+
 }
